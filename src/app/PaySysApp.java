@@ -6,6 +6,7 @@ import paysys.Employee;
 import paysys.Position;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.text.NumberFormat;
 
 
 public class PaySysApp {
@@ -128,12 +129,12 @@ public class PaySysApp {
 
     }
 
-    public void createAddress (String id, String country, String parish, String town, String street) {
+    public void createAddress(String id, String country, String parish, String town, String street) {
         try {
             int iD = Integer.parseInt(id);
-            for (Employee employee : employeeList){
-                if (employee.getEmployeeID()==iD){
-                    Address addr = new Address(country,parish,town,street);
+            for (Employee employee : employeeList) {
+                if (employee.getEmployeeID() == iD) {
+                    Address addr = new Address(country, parish, town, street);
                     employee.setAddress(addr);
                 }
             }
@@ -242,8 +243,8 @@ public class PaySysApp {
             int id = Integer.parseInt(iD);
             int num = Integer.parseInt(val);
             for (Employee employee : employeeList) {
-                if (num==0 || num==1 && employee.getEmployeeID()==id) {
-                        employee.setPosition(num);
+                if (num == 0 || num == 1 && employee.getEmployeeID() == id) {
+                    employee.setPosition(num);
                 }
             }
         } catch (NumberFormatException e) {
@@ -253,58 +254,74 @@ public class PaySysApp {
 
 
     public String generatePaySlip(String iD, String extra, String deduction) {
-        float salary;
+        float salary = 0;
         float bonus = Float.parseFloat(extra);
         float deductions = Float.parseFloat(deduction);
         float totals = 0;
         float netPay = 0;
         String result = "";
-        int id;
 
+        int id;
         try {
             id = Integer.parseInt(iD);
             for (Employee employee : employeeList) {
-                if (employee.getEmployeeID()==id){
-                    if (employee.getHours()<1) {
+                if (employee.getEmployeeID() == id) {
+                    if (employee.getHours() < 1) {
                         return "Employee Has Not Worked Any Hours As Yet";
                     }
-                    if (employee.getPosition()==Position.JUNIORSTAFF){
-                        salary = employee.getHours()*jnrRate;
-                        totals = salary + bonus;
-                        netPay = (totals-deductions);
-                        result = "                                                                  Sunnyside beauty supplies ltd                                ".toUpperCase()+"\n" +
-                                "                                                                       Location:Lucea,Negril                                ".toUpperCase()+"\n"+
-                                "                                                             \tTelephone#:876-5865-9658||876-578-9658                                ".toUpperCase()+"\n"+
-                                "                                                            \tEmployee Payslip                               ".toUpperCase() + "\n\n"+
+                    if (employee.getPosition() == Position.JUNIORSTAFF) {
+                        salary = employee.getHours() * jnrRate;
+                        totals += salary + bonus;
+                        netPay += (totals - deductions);
+                        result = "";
 
-                                "           ----------------------------------------------------------------------------------------------------------------------------------------\n" +
-                                "\nName:  " + employee.getName().getLastName().toUpperCase() + ", " + employee.getName().getFirstName() + "  \tEmp. ID: " + employee.getEmployeeID() + "\tTRN: " + employee.getTRN() +
-                                "\n\nSalary: \t" + salary + "\n\nBonus: \t\t" + bonus  +"\n           ----------------------------------------------------------------------------------------------------------------------------------------\n\n" +
-                                "\n\nDeductions: " + deductions + "\n\nTOTALS: \t" + totals + "\n\nNET PAY: \t" +netPay;
+                        System.out.println("                                                                  Sunnyside beauty supplies ltd                                ".toUpperCase());
+                        System.out.println("                                                                       Location:Lucea,Negril                                ".toUpperCase());
+                        System.out.println("                                                             Telephone#:876-5865-9658||876-578-9658                                ".toUpperCase());
+                        System.out.println("                                                                   Payslip for " + employee.getName() + "".toUpperCase() + "\n" + "\n");
+
+
+                        System.out.println("                                             Employee ID:  " + employee.getEmployeeID() + "" + "                                           Hours:  " + employee.getHours() + "");
+                        System.out.println("                                             Position:  " + employee.getPosition() + "" + "                                    TRN:  " + employee.getTRN() + "");
+                        System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
+                        System.out.println("           Earnings  " + "" + "                                          Amount  " + "       |" + " Deductions  " + "" + "                                Amount  " + "");
+                        System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
+                        System.out.println("           Salary                                             " + NumberFormat.getCurrencyInstance().format(salary) + "" + "       |" + " Deduct                                      " + NumberFormat.getCurrencyInstance().format(deductions) + "              " + "");
+                        System.out.println("           Bonus                                              " + NumberFormat.getCurrencyInstance().format(bonus) + "" + "       |" + "               " + "" + "                                  " + "");
+                        System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
+                        System.out.println("           TOTAL   " + "" + "                                           " + NumberFormat.getCurrencyInstance().format(totals) + "       |" + " NET PAY:                                    " + NumberFormat.getCurrencyInstance().format(netPay));
+                        System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
 
                         paySlipList.add(id + "," + employee.getHours() + "," + jnrRate + "," + salary + "," + bonus + "," + deductions + "," + totals + "," + netPay);
-                        employee.resetHours();
-                    } else if (employee.getPosition()==Position.SENIORSTAFF){
-
+                    } else if (employee.getPosition() == Position.SENIORSTAFF) {
                         salary = employee.getHours() * snrRate;
-                        totals = salary + bonus;
-                        netPay = totals - deductions;
-                        result = "                                                                  Sunnyside beauty supplies ltd                                ".toUpperCase() + "\n" +
-                                "                                                                       Location:Lucea,Negril                                ".toUpperCase() + "\n" +
-                                "                                                             \tTelephone#:876-5865-9658||876-578-9658                                ".toUpperCase() + "\n" +
-                                "                                                            \tEmployee Payslip                               ".toUpperCase() + "\n\n" +
+                        totals += salary + bonus;
+                        netPay += (totals - deductions);
 
-                                "           ----------------------------------------------------------------------------------------------------------------------------------------\n" + "\nName:  " + employee.getName().getLastName().toUpperCase() + ", " + employee.getName().getFirstName() + "  \tEmp. ID: " + employee.getEmployeeID() + "\tTRN: " + employee.getTRN() +
-                                "\n\nSalary: \t" + salary + "\n\nBonus: \t\t" + bonus + "\n           ----------------------------------------------------------------------------------------------------------------------------------------\n\n" +
-                                "\n\nDeductions: " + deductions + "\n\nTOTALS: \t" + totals + "\n\nNET PAY: \t" + netPay;
+                        System.out.println("                                                                  Sunnyside beauty supplies ltd                                ".toUpperCase());
+                        System.out.println("                                                                       Location:Lucea,Negril                                ".toUpperCase());
+                        System.out.println("                                                             Telephone#:876-5865-9658||876-578-9658                                ".toUpperCase());
+                        System.out.println("                                                                   Payslip for " + employee.getName() + "".toUpperCase() + "\n" + "\n");
 
-                        paySlipList.add(id + "," + employee.getHours() + "," + jnrRate + "," + salary + "," + bonus + "," + deductions + "," + totals + "," + netPay);
-                        employee.resetHours();
+
+                        System.out.println("                                             Employee ID:  " + employee.getEmployeeID() + "" + "                                           Hours:  " + employee.getHours() + "");
+                        System.out.println("                                             Position:  " + employee.getPosition() + "" + "                                    TRN:  " + employee.getTRN() + "");
+                        System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
+                        System.out.println("           Earnings  " + "" + "                                          Amount  " + "       |" + " Deductions  " + "" + "                                Amount  " + "");
+                        System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
+                        System.out.println("           Salary                                             " + NumberFormat.getCurrencyInstance().format(salary) + "" + "       |" + " Deduct                                      " + NumberFormat.getCurrencyInstance().format(deductions) + "              " + "");
+                        System.out.println("           Bonus                                              " + NumberFormat.getCurrencyInstance().format(bonus) + "" + "      |" + "               " + "" + "                                  " + "");
+                        System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
+                        System.out.println("           TOTAL   " + "" + "                                           " + NumberFormat.getCurrencyInstance().format(totals) + "      |" + " NET PAY:                                    " + NumberFormat.getCurrencyInstance().format(netPay));
+                        System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
+
+                        paySlipList.add(id + "," + employee.getHours() + "," + snrRate + "," + salary + "," + bonus + "," + deductions + "," + totals + "," + netPay);
+
                     }
                 }
             }
         } catch (Exception e) {
-            System.out.println("Invalid ID, Extra, Or Deduction Values");
+            System.out.println("Invalid ID, Extra, Or Deduction");
         }
         return result;
 //        NumberFormat.getCurrencyInstance().format(v)
@@ -314,133 +331,99 @@ public class PaySysApp {
 
 
     public String searchById(String iD) {
-
         String searchID = "";
-        Employee temp = null;
         int id = 0;
         try {
             id = Integer.parseInt(iD);
             for (Employee employee : employeeList) {
                 if (employee.getEmployeeID() == id && employee.getAddress() != null) {
-                    temp = employee;
                     searchID += employee.getName().toString() + "\n" + employee.getAddress().toString() + "\n" + employee.getPosition() + "\nEmployee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
                 } else if (employee.getEmployeeID() == id && employee.getAddress() == null) {
-                    temp = employee;
                     searchID += employee.getName().toString() + "\n" + employee.getPosition() + "\nEmployee ID: " + employee.getEmployeeID() + "\nHours on record: " + employee.getHours();
 
                 }
             }
 
-            String payVal = null;
             for (String pay : paySlipList) {
                 String[] slip = pay.split(",");
-                if (slip[0].strip().equals(String.valueOf(id))) {
-                    payVal = pay;
-                }
+//                if(slip[0].strip().equals(String )) {
+//
+//                }
+
+//                if (pay.substring(0,3).contains(iD)) {
+//                    String[] arrPay = pay.split(",");
+//                    searchID += "\n" + arrPay[1] + arrPay[2];
+//                }
             }
-
-            String paySlip = null;
-            if (payVal!=null && temp!=null) {
-                String[] values = payVal.split(",");
-
-            paySlip = "\nSunnySide Beauty Supplies Ltd.\n \nName:  " + temp.getName().getLastName().toUpperCase() + ", " + temp.getName().getFirstName()
-                    + "  \tEmp. ID: " + temp.getEmployeeID() + "\tTRN: " + temp.getTRN() + "\n\nHours: \t\t" + values[1] +"\n\nRate Paid: \t" + values[2] + "\n\nSalary: \t" + values[3] + "\n\nBonus: \t\t" + values[4]
-                    + "\n\nDeductions: " + values[5] + "\n\nTOTALS: \t" + values[6] + "\n\nNET PAY: \t" + values[7];
-            searchID+=paySlip;
-            }
-
+            return searchID;
         } catch (NumberFormatException e) {
             return "Invalid Id";
         }
-        return searchID;
     }
 
     public String searchByFirstName(String fName) {
         String searchFName = "";
-        Employee temp = null;
         int id = 0;
         try {
             for (Employee employee : employeeList) {
-                temp = employee;
-                if (employee.getName().getFirstName().equalsIgnoreCase(fName) && employee.getAddress()!=null) {
+                if (employee.getName().getFirstName().equalsIgnoreCase(fName) && employee.getAddress() != null) {
                     id = employee.getEmployeeID();
                     searchFName += employee.getName().toString() + "\n" + employee.getAddress().toString() + "\n" + employee.getPosition()
-                            + "\nEmployee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
-                } else if (employee.getName().getFirstName().equalsIgnoreCase(fName) && employee.getAddress()==null){
-                    temp = employee;
+                            + "Employee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
+                } else if (employee.getName().getFirstName().equalsIgnoreCase(fName) && employee.getAddress() == null) {
                     id = employee.getEmployeeID();
                     searchFName += employee.getName().toString() + "\n" + employee.getPosition()
-                            + "\nEmployee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
+                            + "Employee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
                 }
             }
-
-            String payVal = null;
-            for (String pay : paySlipList) {
-                String[] slip = pay.split(",");
-                if (slip[0].strip().equals(String.valueOf(id))) {
-                    payVal = pay;
+            if (id != 0) {
+                for (String pay : paySlipList) {
+                    if (pay.substring(0, 3).contains(String.valueOf(id))) {
+                        String[] arrPay = pay.split(",");
+                        searchFName += "\n" + arrPay[1] + arrPay[2];
+                    }
                 }
             }
-
-            String paySlip = null;
-
-            if (payVal!=null && temp!=null) {
-                String[] values = payVal.split(",");
-
-                paySlip = "\nSunnySide Beauty Supplies Ltd.\n \nName:  " + temp.getName().getLastName().toUpperCase() + ", " + temp.getName().getFirstName()
-                        + "  \tEmp. ID: " + temp.getEmployeeID() + "\tTRN: " + temp.getTRN() + "\n\nHours: \t\t" + values[1] +"\n\nRate Paid: \t" + values[2] + "\n\nSalary: \t" + values[3] + "\n\nBonus: \t\t" + values[4]
-                        + "\n\nDeductions: " + values[5] + "\n\nTOTALS: \t" + values[6] + "\n\nNET PAY: \t" + values[7];
-                searchFName+=paySlip;
-            }
-
+            return searchFName;
         } catch (Exception e) {
             return "Person with first name " + fName + " cannot be found";
         }
-        return searchFName;
     }
 
     public String searchByLastName(String lName) {
         String searchLName = "";
-        Employee temp = null;
         int id = 0;
         try {
             for (Employee employee : employeeList) {
-                if (employee.getName().getLastName().equalsIgnoreCase(lName) && employee.getAddress()!=null) {
-                    temp = employee;
+                if (employee.getName().getLastName().equalsIgnoreCase(lName) && employee.getAddress() != null) {
                     id = employee.getEmployeeID();
                     searchLName += employee.getName().toString() + "\n" + employee.getAddress().toString() + "\n" + employee.getPosition()
-                            + "\nEmployee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
-                } else if (employee.getName().getLastName().equalsIgnoreCase(lName) && employee.getAddress()==null){
-                    temp = employee;
+                            + "Employee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
+                } else if (employee.getName().getLastName().equalsIgnoreCase(lName) && employee.getAddress() == null) {
                     searchLName += employee.getName().toString() + "\n" + employee.getPosition()
-                            + "\nEmployee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
+                            + "Employee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
                 }
             }
-
-            String payVal = null;
-            for (String pay : paySlipList) {
-                String[] slip = pay.split(",");
-                if (slip[0].strip().equals(String.valueOf(id))) {
-                    payVal = pay;
+            if (id != 0) {
+                for (String pay : paySlipList) {
+                    if (pay.contains(String.valueOf(id))) {
+                        String[] arrPay = pay.split(",");
+                        searchLName += "\n" + arrPay[1] + arrPay[2];
+                    }
                 }
             }
-
-            String paySlip = null;
-
-            if (payVal!=null && temp!=null) {
-                String[] values = payVal.split(",");
-
-                paySlip = "\nSunnySide Beauty Supplies Ltd.\n \nName:  " + temp.getName().getLastName().toUpperCase() + ", " + temp.getName().getFirstName()
-                        + "  \tEmp. ID: " + temp.getEmployeeID() + "\tTRN: " + temp.getTRN() + "\n\nHours: \t\t" + values[1] +"\n\nRate Paid: \t" + values[2] + "\n\nSalary: \t" + values[3] + "\n\nBonus: \t\t" + values[4]
-                        + "\n\nDeductions: " + values[5] + "\n\nTOTALS: \t" + values[6] + "\n\nNET PAY: \t" + values[7];
-                searchLName+=paySlip;
-            }
-
-
         } catch (Exception e) {
             return "Person with last name " + lName + " cannot be found";
         }
         return searchLName;
+    }
+
+    public void display() {
+
+        for (int i = 0; i < employeeList.size(); i++) {
+            System.out.println("Name: " + employeeList.get(i).getName() + ", " + "Gender:" + employeeList.get(i).getGender());
+            System.out.println("____________________________________________________________");
+        }
     }
 
 
@@ -481,9 +464,19 @@ public class PaySysApp {
         }
     }
 
-    public String generateReport () {
-        return "";
+    public void generateReport() {
+
+
+
+        System.out.println("                                                                  Sunnyside beauty supplies ltd                                ".toUpperCase());
+        System.out.println("                                                                       Location:Lucea,Negril                                ".toUpperCase());
+        System.out.println("                                                             Telephone#:876-5865-9658||876-578-9658                                ".toUpperCase());
+        for (int i = 0; i < employeeList.size(); i++) {
+            System.out.println("Name: " + employeeList.get(i).getName() + ", " + "Hours:" + employeeList.get(i).getHours());
+        }
     }
+
+
 
 
     public void shutDown () throws IOException {
@@ -504,6 +497,7 @@ public class PaySysApp {
         for (String report : reportList) {
             reportData.putNext(putReport(report));
         }
+        System.out.println("THANK YOU FOR USING OUR APPLICATION");
         System.exit(0);
 
     }
@@ -511,18 +505,11 @@ public class PaySysApp {
 
     //Helper functions
     public String[] putEmployeeInfo(Employee employee){
-        int pos;
-        if (employee.getPosition()==Position.SENIORSTAFF){
-            pos = 0;
-        } else {
-            pos = 1;
-        }
-
         String str;
         if (employee.getAddress()!=null){
-            str = employee.getTRN() + "," + employee.getNIS() + "," + employee.getYOB() + "," + employee.getGender() + "," + employee.getEmployeeID() + "," + employee.getName().getFirstName() + "," + employee.getName().getMiddleName() + "," + employee.getName().getLastName() + "," + employee.getAddress().getCountry() + "," + employee.getAddress().getParish() + "," + employee.getAddress().getTown() + "," + employee.getAddress().getStreet() + "," + pos + "," + employee.getHours();
+            str = employee.getTRN() + "," + employee.getNIS() + "," + employee.getYOB() + "," + employee.getGender() + "," + employee.getEmployeeID() + "," + employee.getName().getFirstName() + "," + employee.getName().getMiddleName() + "," + employee.getName().getLastName() + "," + employee.getAddress().getCountry() + "," + employee.getAddress().getParish() + "," + employee.getAddress().getTown() + "," + employee.getAddress().getStreet() + "," + employee.getPosition() + "," + employee.getHours();
         } else {
-            str = employee.getTRN() + "," + employee.getNIS() + "," + employee.getYOB() + "," + employee.getGender() + "," + employee.getEmployeeID() + "," + employee.getName().getFirstName() + "," + employee.getName().getMiddleName() + "," + employee.getName().getLastName() + "," +  "" + "," +  "" + "," + "" + "," + "" + "," + pos + "," + employee.getHours();
+            str = employee.getTRN() + "," + employee.getNIS() + "," + employee.getYOB() + "," + employee.getGender() + "," + employee.getEmployeeID() + "," + employee.getName().getFirstName() + "," + employee.getName().getMiddleName() + "," + employee.getName().getLastName() + "," +  "" + "," +  "" + "," + "" + "," + "" + "," + employee.getPosition() + "," + employee.getHours();
         }
         return str.split(",",-1);
     }
@@ -538,6 +525,9 @@ public class PaySysApp {
     public String [] putReport (String report) {
         return report.split(",");
     }
+
+
+
 
 
     public static void main (String[] args) throws IOException {
