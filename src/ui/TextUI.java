@@ -28,7 +28,7 @@ public class TextUI {
                     choice0 = manage.nextInt();
 
                     if (choice0 == 1) {
-                        System.out.println("Enter New Employee Information\n Format Required - 123456789,4321,1999,M or F,John,James,Jones,0 or 1");
+                        System.out.println("Enter New Employee Information\n Format Required - TRN#:123456789,NIS#:4321,Birthyear:1999,Gender:M or F,Name:John,James,Jones,Position 0 or 1");
                         Scanner newEmp = new Scanner(System.in);
                         String line = newEmp.nextLine();
                         String[] empArr = line.split(",");

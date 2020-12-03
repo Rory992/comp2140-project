@@ -48,6 +48,7 @@ public class Employee extends Person {
     public Employee(int trn, int nis, int yob, char gender, String fName, String mName, String lName, int pos) {
         super(trn, nis, yob, gender);
         name = new Name(fName, mName, lName);
+        setPosition(pos);
     }
 
     public void setAddress (Address addr) {

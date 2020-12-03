@@ -235,7 +235,6 @@ public class PaySysApp {
         } catch (NumberFormatException e) {
             System.out.println("Invalid ID or hours");
         }
-
     }
 
     public void changePosition(String iD, String val) {
@@ -287,7 +286,7 @@ public class PaySysApp {
                         System.out.println("           Earnings  " + "" + "                                          Amount  " + "       |" + " Deductions  " + "" + "                                Amount  " + "");
                         System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
                         System.out.println("           Salary                                             " + NumberFormat.getCurrencyInstance().format(salary) + "" + "       |" + " Deduct                                      " + NumberFormat.getCurrencyInstance().format(deductions) + "              " + "");
-                        System.out.println("           Bonus                                              " + NumberFormat.getCurrencyInstance().format(bonus) + "" + "       |" + "               " + "" + "                                  " + "");
+                        System.out.println("           Bonus                                              " + NumberFormat.getCurrencyInstance().format(bonus) + "" + "        |" + "               " + "" + "                                  " + "");
                         System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
                         System.out.println("           TOTAL   " + "" + "                                           " + NumberFormat.getCurrencyInstance().format(totals) + "       |" + " NET PAY:                                    " + NumberFormat.getCurrencyInstance().format(netPay));
                         System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
@@ -310,7 +309,7 @@ public class PaySysApp {
                         System.out.println("           Earnings  " + "" + "                                          Amount  " + "       |" + " Deductions  " + "" + "                                Amount  " + "");
                         System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
                         System.out.println("           Salary                                             " + NumberFormat.getCurrencyInstance().format(salary) + "" + "       |" + " Deduct                                      " + NumberFormat.getCurrencyInstance().format(deductions) + "              " + "");
-                        System.out.println("           Bonus                                              " + NumberFormat.getCurrencyInstance().format(bonus) + "" + "      |" + "               " + "" + "                                  " + "");
+                        System.out.println("           Bonus                                              " + NumberFormat.getCurrencyInstance().format(bonus) + "" + "       |" + "               " + "" + "                                  " + "");
                         System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
                         System.out.println("           TOTAL   " + "" + "                                           " + NumberFormat.getCurrencyInstance().format(totals) + "      |" + " NET PAY:                                    " + NumberFormat.getCurrencyInstance().format(netPay));
                         System.out.println("           ---------------------------------------------------------------" + "----|" + "--------------------------------------------------------------------");
@@ -332,34 +331,46 @@ public class PaySysApp {
 
     public String searchById(String iD) {
         String searchID = "";
+        Employee temp = null;
         int id = 0;
         try {
             id = Integer.parseInt(iD);
             for (Employee employee : employeeList) {
                 if (employee.getEmployeeID() == id && employee.getAddress() != null) {
+                    temp = employee;
                     searchID += employee.getName().toString() + "\n" + employee.getAddress().toString() + "\n" + employee.getPosition() + "\nEmployee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
+
                 } else if (employee.getEmployeeID() == id && employee.getAddress() == null) {
+                    temp = employee;
                     searchID += employee.getName().toString() + "\n" + employee.getPosition() + "\nEmployee ID: " + employee.getEmployeeID() + "\nHours on record: " + employee.getHours();
 
                 }
             }
 
+            String payVal = null;
             for (String pay : paySlipList) {
                 String[] slip = pay.split(",");
-//                if(slip[0].strip().equals(String )) {
-//
-//                }
-
-//                if (pay.substring(0,3).contains(iD)) {
-//                    String[] arrPay = pay.split(",");
-//                    searchID += "\n" + arrPay[1] + arrPay[2];
-//                }
+                if (slip[0].strip().equals(String.valueOf(id))) {
+                    payVal = pay;
+                }
             }
-            return searchID;
+
+            String paySlip = null;
+            if (payVal!=null && temp!=null) {
+                String[] values = payVal.split(",");
+
+                paySlip = "\nSunnySide Beauty Supplies Ltd.\n \nName:  " + temp.getName().getLastName().toUpperCase() + ", " + temp.getName().getFirstName()
+                        + "  \tEmp. ID: " + temp.getEmployeeID() + "\tTRN: " + temp.getTRN() + "\n\nHours: \t\t" + values[1] +"\n\nRate Paid: \t" + values[2] + "\n\nSalary: \t" + values[3] + "\n\nBonus: \t\t" + values[4]
+                        + "\n\nDeductions: " + values[5] + "\n\nTOTALS: \t" + values[6] + "\n\nNET PAY: \t" + values[7];
+                searchID+=paySlip;
+            }
+
         } catch (NumberFormatException e) {
             return "Invalid Id";
         }
+        return searchID;
     }
+
 
     public String searchByFirstName(String fName) {
         String searchFName = "";
@@ -369,11 +380,11 @@ public class PaySysApp {
                 if (employee.getName().getFirstName().equalsIgnoreCase(fName) && employee.getAddress() != null) {
                     id = employee.getEmployeeID();
                     searchFName += employee.getName().toString() + "\n" + employee.getAddress().toString() + "\n" + employee.getPosition()
-                            + "Employee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
+                            + "\nEmployee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
                 } else if (employee.getName().getFirstName().equalsIgnoreCase(fName) && employee.getAddress() == null) {
                     id = employee.getEmployeeID();
                     searchFName += employee.getName().toString() + "\n" + employee.getPosition()
-                            + "Employee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
+                            + "\nEmployee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
                 }
             }
             if (id != 0) {
@@ -398,10 +409,10 @@ public class PaySysApp {
                 if (employee.getName().getLastName().equalsIgnoreCase(lName) && employee.getAddress() != null) {
                     id = employee.getEmployeeID();
                     searchLName += employee.getName().toString() + "\n" + employee.getAddress().toString() + "\n" + employee.getPosition()
-                            + "Employee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
+                            + "\nEmployee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
                 } else if (employee.getName().getLastName().equalsIgnoreCase(lName) && employee.getAddress() == null) {
                     searchLName += employee.getName().toString() + "\n" + employee.getPosition()
-                            + "Employee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
+                            + "\nEmployee ID: " + employee.getEmployeeID() + "\n" + "Hours on record: " + employee.getHours();
                 }
             }
             if (id != 0) {
@@ -421,7 +432,7 @@ public class PaySysApp {
     public void display() {
 
         for (int i = 0; i < employeeList.size(); i++) {
-            System.out.println("Name: " + employeeList.get(i).getName() + ", " + "Gender:" + employeeList.get(i).getGender());
+            System.out.println("Name: " + employeeList.get(i).getName() + ", " + "Gender:" + employeeList.get(i).getGender() + "Position:" + employeeList.get(i).getPosition());
             System.out.println("____________________________________________________________");
         }
     }
@@ -477,8 +488,6 @@ public class PaySysApp {
     }
 
 
-
-
     public void shutDown () throws IOException {
         employeeData.rewrite();
         paySlipData.rewrite();
@@ -499,7 +508,6 @@ public class PaySysApp {
         }
         System.out.println("THANK YOU FOR USING OUR APPLICATION");
         System.exit(0);
-
     }
 
 
@@ -525,9 +533,6 @@ public class PaySysApp {
     public String [] putReport (String report) {
         return report.split(",");
     }
-
-
-
 
 
     public static void main (String[] args) throws IOException {
