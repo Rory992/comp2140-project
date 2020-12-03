@@ -29,7 +29,27 @@ public class Main {
         int choice = select.nextInt();
 
         if (choice == 1) {
-            ui.start(app);
+            while (true) {
+                System.out.println("\nPlease Enter Username: ");
+                Scanner user = new Scanner(System.in);
+
+                String userName = user.next();
+
+                System.out.println("\nPlease Enter Password: ");
+                Scanner passcode = new Scanner(System.in);
+
+                String code = passcode.next();
+
+                if (userName.compareTo("Admin101")==0 && code.compareTo("303Admin")==0) {
+                    ui.start(app);
+
+                } else if (userName.compareTo("Payroll505")==0 && code.compareTo("909Pay")==0) {
+                    ui.letsGo(app);
+                }
+
+                System.out.println("\nUsername Or Password Is Incorrect");
+            }
+
 //        } else{
 //            Gui gui = new Gui(app);
 //            gui.main(app);
